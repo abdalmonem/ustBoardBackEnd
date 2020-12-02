@@ -1,25 +1,18 @@
-from flask import Flask
-from extensions import db
-from models.DepartmentModel import DepartmentModel
-from models.UserModel import UserModel
+from configurations import db
+from models.DeptModel import DeptModel
 
+class Materials(db.Model):
+    _tabelname_ = 'materials'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    h_rate = db.Column(db.Interger, nullable=False)
+    year = db.Column(db.Integer, nullable=False)
+    dept: DeptModel = db.relationship(DeptModel)
+    dept_id = db.Column(db.Integer, db.ForeignKey(DeptModel.id))
 
-class MaterialModel(db.Model):
+    def __init__(self, title, h_rate, year):
+        self.title = title
+        self.h_rate = h_rate
+        self.year = year
+        self.dept_id = self.dept.id
 
-    __tablename__ = 'materials'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    title = db.Column(db.String(100))
-    hours_rate = db.Column(db.Integer)
-    department: DepartmentModel = db.relationship(DepartmentModel)
-    department_id = db.Column(db.Integer, db.ForeignKey(DepartmentModel.id), nullable=True)
-    year = db.Column(db.Integer)
-
-    @staticmethod
-    def init():
-        db.create_all()
-        print("materials table created")
-
-    @staticmethod
-    def drop():
-        db.drop_all()
-        print("materials table droped")

@@ -1,19 +1,12 @@
-from flask import Flask, request, jsonify, Blueprint
-from flask_sqlalchemy import SQLAlchemy
-import os
-from api.auth import auth
-from api.testfun import testfun
-from extensions import db
+from configurations import app, api, jwt
+from resources.User import Login
+from resources.Student import AddStudent
+from resources.Dept import AddDept
 
+# db.create_all()
 
-app = Flask(__name__)
-basedir = os.path.abspath(os.path.dirname(__file__))
-
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:root@localhost/ustBoard"
-
-app.register_blueprint(auth)
-app.register_blueprint(testfun)
-db.init_app(app)
-
-if __name__ == '__main__':
-    app.run(debug = True)
+api.add_resource(Login, '/login')
+api.add_resource(AddStudent, '/add-student')
+api.add_resource(AddDept, '/add-dept')
+if __name__ == "__main__":
+    app.run(debug=True)
