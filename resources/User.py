@@ -11,7 +11,6 @@ from flask_jwt_extended import (
     get_jwt_identity
 )
 
-# User Model Schema
 user_schema = UserSchema()
 
 class Login(Resource):
@@ -23,8 +22,8 @@ class Login(Resource):
             return error.messages
         user = Users.find_by_phone(data['phone'])
         if user and user.password_check(data['password']):
-            access_token = create_access_token(identity=user.rank)
-            return { "TOKEN": access_token }, 200
+            access_token = create_access_token(identity=user.rank, fresh=True)
+            return { "TOKEN": access_token, "id": user.id, "rank": user.rank }, 200
         else:
             return { "error": "Either User not found or Invalid request \"input\"." }, 400
 

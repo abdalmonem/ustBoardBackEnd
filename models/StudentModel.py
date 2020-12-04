@@ -8,7 +8,7 @@ class Student(Users):
     card_id = db.Column(db.String(100), nullable=False)
     user: Users = db.relationship(Users)
     year = db.Column(db.Integer)
-    user_id = db.Column(db.Integer, db.ForeignKey(Users.id))
+    student_id = db.Column(db.Integer, db.ForeignKey(Users.id))
 
     def __init__(self, username, password, email, phone, surename, date, year, card_id):
         super().__init__(username, password, email, phone, surename, date)

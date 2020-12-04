@@ -2,4 +2,5 @@ from marshmallow import fields
 from schemas.UserSchema import UserSchema
 
 class SupervisorSchema(UserSchema):
-    user_id = fields.Int()
+    super_card_id = fields.Str()
+    dept_id = fields.Int()

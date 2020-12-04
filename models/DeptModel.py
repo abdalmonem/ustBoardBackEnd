@@ -22,3 +22,10 @@ class DeptModel(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def get_title(self):
+        return self.title
+
+    def get_type(self):
+        return self.dept_type
+
+

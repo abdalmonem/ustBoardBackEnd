@@ -14,7 +14,7 @@ class Users(db.Model):
 
     def __init__(self, username, password, email, phone, surename, date):
         self.username = username
-        self.password = password # hashlib.md5(password.encode('utf-8')).hexdigest()
+        self.password = hashlib.md5(password.encode('utf-8')).hexdigest()
         self.email = email
         self.phone = phone
         self.surename = surename
@@ -28,9 +28,12 @@ class Users(db.Model):
     def find_by_id(cls, id):
         return cls.query.filter_by(id=id).first()
 
+    @classmethod
+    def get_user_id(cls):
+        return cls.id;
+
     def password_check(self, password):
-        # password = hashlib.md5(password.encode('utf-8')).hexdigest()
-        if self.password == password:
+        if self.password == hashlib.md5(password.encode('utf-8')).hexdigest():
             return True
 
     def save_data(self):
