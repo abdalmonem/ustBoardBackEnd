@@ -1,5 +1,4 @@
 from configurations import db
-# from models.SupervisorModel import Supervisor
 
 class DeptModel(db.Model):
     _tabelname_ = 'department'
@@ -12,7 +11,6 @@ class DeptModel(db.Model):
         self.title = title
         self.year = year
         self.dept_type = dept_type
-
 
     @classmethod
     def check_dept(cls, title):
@@ -27,5 +25,4 @@ class DeptModel(db.Model):
 
     def get_type(self):
         return self.dept_type
-
 

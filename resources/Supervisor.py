@@ -25,3 +25,4 @@ class AddSuperVisor(Resource):
         except IntegrityError as error:
             return error._message(IndentationError)
         return supervisor_schema.dump(supervisor)
+

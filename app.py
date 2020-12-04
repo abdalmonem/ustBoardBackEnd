@@ -7,11 +7,11 @@ from resources.Supervisor import AddSuperVisor
 from models.AdminModel import Admin
 
 # db.create_all()
-@app.route('/', methods=['GET'])
-def index():
-    admin = Admin('admin', '12345', 'admin@admin', '1234', 'Adminstrator', '20201209')
-    admin.save_data()
-    return {"msg": "admin created."}
+# @app.route('/', methods=['GET'])
+# def index():
+#     admin = Admin('admin', '12345', 'admin@admin', '1234', 'Adminstrator', '20201209')
+#     admin.save_data()
+#     return {"msg": "admin created."}
 
 api.add_resource(Login, '/login')
 api.add_resource(AddStudent, '/add-student')

@@ -39,3 +39,4 @@ class Users(db.Model):
     def save_data(self):
         db.session.add(self)
         db.session.commit()
+

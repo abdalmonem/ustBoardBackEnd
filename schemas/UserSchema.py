@@ -10,3 +10,4 @@ class UserSchema(ma.Schema):
     phone = fields.Str()
     surename = fields.Str()
     date = fields.Int()
+

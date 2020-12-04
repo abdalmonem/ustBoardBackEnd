@@ -30,3 +30,4 @@ class Login(Resource):
 
 class Logout(Resource):
     pass
+
