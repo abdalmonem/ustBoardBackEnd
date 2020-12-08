@@ -1,6 +1,6 @@
 from flask import request
 from flask_restful import Resource
-from models.DeptModel import DeptModel
+from models.DepartmentModel import DeptModel
 from schemas.DeptSchema import DeptSchema
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError

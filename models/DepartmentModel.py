@@ -1,11 +1,20 @@
 from configurations import db
 
 class DeptModel(db.Model):
-    _tabelname_ = 'department'
+    __tablename__ = 'departments'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100))
     year = db.Column(db.Integer, nullable=False)
     dept_type = db.Column(db.String(50), nullable=False)
+    student = db.relationship('Student', uselist=False)
+    supervisor = db.relationship('Supervisor', uselist=False)
+    materials = db.relationship('Materials')
+    class_group = db.relationship('ClassGroupModel', uselist=False)
+    lab_group = db.relationship('LabGroupModel', uselist=False)
+
+    __mapper_args__ = { 
+        'polymorphic_identity': 'department'
+    }
 
     def __init__(self, title, year, dept_type):
         self.title = title

@@ -2,14 +2,13 @@ from flask import request
 from configurations import jwt
 from flask_restful import Resource
 from models.UsersModel import Users
+from models.TeacherModel import Teachers
 from schemas.UserSchema import UserSchema
+from schemas.TeacherSchema import TeacherSchema
 from marshmallow import ValidationError
-from flask_jwt_extended import (
-    jwt_required,
-    create_access_token,
-    get_jwt_claims,
-    get_jwt_identity
-)
+from sqlalchemy.exc import IntegrityError
+from marshmallow import ValidationError
+from flask_jwt_extended import jwt_required, create_access_token
 
 user_schema = UserSchema()
 
@@ -26,6 +25,7 @@ class Login(Resource):
             return { "TOKEN": access_token, "id": user.id, "rank": user.rank }, 200
         else:
             return { "error": "Either User not found or Invalid request \"input\"." }, 400
+
 
 
 class Logout(Resource):

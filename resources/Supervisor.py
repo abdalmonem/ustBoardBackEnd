@@ -8,7 +8,7 @@ from flask_jwt_extended import jwt_required
 
 supervisor_schema = SupervisorSchema()
 
-class AddSuperVisor(Resource):
+class SuperVisor(Resource):
     @jwt_required
     def post(self):
         json_data = request.get_json()
@@ -25,4 +25,20 @@ class AddSuperVisor(Resource):
         except IntegrityError as error:
             return error._message(IndentationError)
         return supervisor_schema.dump(supervisor)
+
+    @jwt_required
+    def get(self, card_id):
+        supervisor = Supervisor.find_by_card_id(card_id)
+        if supervisor:
+            return supervisor_schema.dump(supervisor)
+        return {"msg": "User not found."}, 404
+
+    @jwt_required
+    def put(self, name):
+        json_data = request.get_json()
+        supervisor = Supervisor.find_by_username(name)
+        if supervisor:
+            pass
+        return {"msg": "User not found."}, 404
+        
 

@@ -1,18 +1,21 @@
 from configurations import db
-from models.SupervisorModel import Supervisor
 
 class ClassGroupModel(db.Model):
-    _tabelname_ = 'class_group'
+    __tablename__ = 'class_group'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(50), nullable=False)
     year = db.Column(db.Integer, nullable=False)
     c_type = db.Column(db.Integer)
-    supervisor: Supervisor = db.relationship(Supervisor)
-    supervisor_id = db.Column(db.Integer, db.ForeignKey(Supervisor.id))
+    dept = db.Column(db.Integer, db.ForeignKey('departments.id'))
+    scheduales = db.relationship('ClassSchedualeModel', lazy='dynamic')
     
-    def __init__(self, title, year, c_type, supervisor_id):
+    def __init__(self, title, year, c_type, dept):
         self.title = title
         self.year = year
         self.g_type = c_type
-        self.supervisor_id = supervisor_id
+        self.dept_id = dept
+
+    def save_data(self):
+        db.session.add(self)
+        db.session.commit()
 

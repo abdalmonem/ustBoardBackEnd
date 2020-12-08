@@ -2,7 +2,7 @@ from configurations import db
 from werkzeug.security import hashlib
 
 class Users(db.Model):
-    _tabelnsme_ = 'users'
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
@@ -11,6 +11,12 @@ class Users(db.Model):
     surename = db.Column(db.String(255), nullable=False)
     date = db.Column(db.Integer)
     rank = db.Column(db.Integer)
+    type = db.Column(db.String(50))
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'users',
+        'polymorphic_on': type
+    }
 
     def __init__(self, username, password, email, phone, surename, date):
         self.username = username
@@ -25,8 +31,8 @@ class Users(db.Model):
         return cls.query.filter_by(phone=phone).first()
 
     @classmethod
-    def find_by_id(cls, id):
-        return cls.query.filter_by(id=id).first()
+    def find_by_id(cls, user_id):
+        return cls.query.filter_by(id=user_id).first()
 
     @classmethod
     def get_user_id(cls):

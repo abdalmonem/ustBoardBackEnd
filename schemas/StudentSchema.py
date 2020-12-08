@@ -6,4 +6,5 @@ class StudentSchema(UserSchema):
     user_id = fields.Int()
     year = fields.Int()
     card_id = fields.Str()
+    dept_id = fields.Int()
 
