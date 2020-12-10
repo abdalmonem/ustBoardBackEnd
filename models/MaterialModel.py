@@ -10,7 +10,7 @@ class Materials(db.Model):
     dept_id = db.Column(db.Integer, db.ForeignKey('departments.id'))
     dept = db.relationship('DeptModel')
     teachers = db.relationship('Teachers')
-    grade = db.relationship('GradeScheduale', uselist=False)
+    # grade = db.relationship('GradeScheduale', uselist=False)
 
     def __init__(self, title, h_rate, year, dept_id):
         self.title = title

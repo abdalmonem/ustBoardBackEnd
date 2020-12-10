@@ -1,19 +1,22 @@
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import engine
 from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
-# from models.UsersModel import Users
 
 # App Inistance
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'willbechangedlateron'
+db_name = 'ustDatabase'
+db_user = 'root:'
+db_pass = ''
+db_addr = '@127.0.0.1/'
 
 # Database config "initial config"
-basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://' + db_user + db_pass + db_addr + db_name
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
