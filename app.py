@@ -1,3 +1,4 @@
+import os
 from flask import jsonify
 from configurations import app, api, jwt
 from resources.User import Login
@@ -30,4 +31,6 @@ api.add_resource(ClassScheduales, '/add-class-scheduale')
 api.add_resource(LabScheduales, '/add-lab-scheduale')
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
+    # app.run(debug=True)
