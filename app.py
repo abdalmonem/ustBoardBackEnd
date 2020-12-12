@@ -15,8 +15,8 @@ from resources.Scheduales import LabScheduales, ClassScheduales
 # db.create_all()
 @app.route('/', methods=['GET'])
 def index():
-    # admin = Admin('admin2', '6666', 'admin2@admin', '6666', 'Hekmat', '20201209')
-    # admin.save_data()
+    admin = Admin('admin2', '6666', 'admin2@admin', '6666', 'Hekmat', '20201209')
+    admin.save_data()
     return {"msg": "Hello World."}
 
 api.add_resource(Login, '/login')
