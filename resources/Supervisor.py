@@ -2,7 +2,7 @@ from flask import request
 from flask_restful import Resource
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
-from models.SupervisorModel import Supervisor
+from models.SuperVisorModel import Supervisor
 from schemas.SupervisorSchema import SupervisorSchema
 from flask_jwt_extended import jwt_required
 
