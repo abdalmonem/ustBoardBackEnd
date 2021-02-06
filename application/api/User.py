@@ -137,7 +137,7 @@ def profile(username):
         return {"data:": super_data}
 
     if user_rank == current_app.config['TEACHER_RANK']:
-        user = Supervisor.find_by_username(username)
+        user = Teachers.find_by_username(username)
         teacher_data = teacher_schema.dump(user)
         return {"data:": teacher_data}
 
@@ -161,14 +161,21 @@ def edit_profile(username):
         data = admin_schema.dump(user)
     except ValidationError as error:
         return error.messages, 400
-    if json_data['username'] == data['username'] or json_data['phone'] == data['phone']:
-        return {"msg": "username or phone number already token"}, 400
     try:
-        user.email = json_data['email']
-        user.gendre = json_data['gendre']
-        user.phone = json_data['phone']
+        if json_data['email']:
+            if Users.query.filter_by(email=json_data['email']):
+                return {"msg": "email already exists"}, 500
+            user.email = json_data['email']
+        if json_data['phone']:
+            if Users.find_by_phone(json_data['phone']):
+                return {"msg": "phone already exists"}, 500
+            user.phone = json_data['phone']
+        if json_data['username']:
+            if Users.find_by_username(json_data['username']):
+                return {"msg": "username already token"}
+            user.username = json_data['username']
         user.surename = json_data['surename']
-        user.username = json_data['username']
+        user.gendre = json_data['gendre']
         user.set_passowrd(data['password'])
         db.session.commit()
     except IntegrityError as error:
