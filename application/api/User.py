@@ -162,26 +162,32 @@ def edit_profile(username):
     except ValidationError as error:
         return error.messages, 400
     try:
-        if json_data['email']:
-            if Users.query.filter_by(email=json_data['email']):
+        if 'email' in json_data:
+            if Users.query.filter_by(email=json_data['email']).first():
                 return {"msg": "email already exists"}, 500
             user.email = json_data['email']
-        if json_data['phone']:
+
+        if 'phone' in json_data:
             if Users.find_by_phone(json_data['phone']):
                 return {"msg": "phone already exists"}, 500
             user.phone = json_data['phone']
-        if json_data['username']:
+
+        if 'username' in json_data:
             if Users.find_by_username(json_data['username']):
                 return {"msg": "username already token"}
             user.username = json_data['username']
-        user.surename = json_data['surename']
-        user.gendre = json_data['gendre']
-        user.set_passowrd(data['password'])
+        
+        if 'surename' in json_data:
+            user.surename = json_data['surename']
+        if 'gendre' in json_data:
+            user.gendre = json_data['gendre']
+        if 'password' in json_data:
+            user.set_passowrd(json_data['password'])
         db.session.commit()
     except IntegrityError as error:
         db.session.rollback()
         return error._message(), 500
-    return {"data": admin_schema.dump(user), "url": url_for('/profile/' + json_data['username'])}
+    return {"data": admin_schema.dump(user)}
 
 @api.route('/profile/delete/<string:username>', methods=['DELETE'])
 @confirmed
