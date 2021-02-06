@@ -20,7 +20,3 @@ def user_rank(identity):
 @jwt.token_in_blacklist_loader
 def check_token(decrypted_token):
     return decrypted_token['jti'] in LogoutList
-
-# if not user.confirmed:
-#     confirm_number = user.generate_confirm_number()
-#     return {"id" : identity, "rank": rank, "confirmation": confirm_number}
