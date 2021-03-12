@@ -3,6 +3,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'some hard secret key here'
+    SSL_REDIRECT = False
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     UST_ADMIN = os.environ.get('UST_ADMIN')
     JWT_BLACKLIST_ENABLED = True
@@ -17,13 +18,15 @@ class Config:
     STUDENT_RANK = 0
 
     @staticmethod
-    def init_app(app):
+    def init_app(cls,app):
         pass
 
 
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+    # def init_app(cls, app):
+        # DevelopmentConfig.init_app(app)
 
 
 class TestingConfig(Config):
@@ -33,7 +36,14 @@ class TestingConfig(Config):
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+    SSL_REDIRECT = True if os.environ.get('DYNO') else False
 
+    @classmethod
+    def init_app(cls, app):
+        Config.init_app(app)
+
+        from werkzeug.middleware.proxy_fix import ProxyFix
+        app.wsgi_app = ProxyFix(app.wsgi_app)
 
 config = {
     'development': DevelopmentConfig,

@@ -1,7 +1,8 @@
 import os
-from flask_migrate import Migrate
-from application import create_app, db
-from application.models import (
+# from waitress import serve
+from flask_migrate import Migrate, upgrade, Manager
+from app import create_app, db
+from app.models import (
     Users, Admin, Supervisor, Teachers, Student, DeptModel,
     ClassGroup, LabGroup, Materials, Notifications, SchedualeCells,
     ClassSchedualeCells, LabSchedualeCells, Grades
@@ -20,8 +21,11 @@ def make_shell_context():
     )
 
 @app.cli.command()
-def test():
-    """ Run test file as command """
-    import unittest
-    tests = unittest.TestLoader().discover('tests')
-    unittest.TextTestRunner(verbosity=2).run(tests)
+def deploy():
+    """Migrate database"""
+    upgrade()
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080, debug=True)
+
+# "ust:create_app('production')"
