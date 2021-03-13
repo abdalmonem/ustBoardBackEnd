@@ -1,5 +1,5 @@
 from flask import request
-from flask_jwt_extended import jwt_required, get_jwt_claims
+from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from . import api
@@ -29,16 +29,65 @@ def add_department():
     return dept_schema.dump(dept)
 
 @api.route('/department/<string:title>', methods=['GET'])
+@jwt_required
+@admin_required
 def get_department(title):
-    pass
+    try:
+        dept = DeptModel.find_by_title(title)
+    except IntegrityError as error:
+        return error._message()
+    if not dept:
+        return {"msg": "not found"}, 404
+    dept_data = dept_schema.dump(dept)
+        return {"data:": dept_data}
 
-@api.route('/department/edit/<string:title>', methods=['POST'])
-def edit_department(title):
-    pass
+@api.route('/department/edit/<int:id>', methods=['PUT'])
+@jwt_required
+@admin_required
+def edit_department(id):
+    json_data = request.get_json()
+    try:
+        dept = DeptModel.find_by_id(id)
+    except IntegrityError as error:
+        return error._message()
+    if not dept:
+        return {"msg": "not found"}, 404
+    try:
+        if 'dept_title' in json_data:
+            if DeptModel.query.filter_by(title=json_data['dept_type']).first():
+                return {"msg": "department already exists"}, 500
+            dept.title = json_data['dept_title']
+        if 'dept_type' in json_data:
+            dept.type = json_data['dept_type']
+        if 'year' in json_data:
+            dept.year = json_data['year']
+        db.session.commit()
+    except IntegrityError as error:
+        db.session.rollback()
+        return error._message(), 500
+    try:
+        dept = DeptModel.find_by_id(id)
+        dept_data = dept_schema.dump(dept)
+    except ValidationError as error:
+        return error.messages, 400
+    return {"msg": "data has been updated.", "data": dept_data}
 
 @api.route('/department/delete/<string:title>', methods=['DELETE'])
+@jwt_required
+@admin_required
 def delete_department(title):
-    pass
+    try:
+        dept = DeptModel.find_by_username(title)
+    except IntegrityError as error:
+        return error._message()
+    if not dept:
+        return {"msg": "not found"}, 404
+    try:
+        dept.delete_data()
+    except IntegrityError as error:
+        db.session.rollback()
+        return error._message(), 500
+    return {"msg": "department data has been deleted."}
 
 @api.route('/department/all', methods=['GET'])
 def get_departments():

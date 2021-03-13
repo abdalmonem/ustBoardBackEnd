@@ -88,7 +88,7 @@ def login():
             except:
                 return {"msg": "couldn't load confirm"}
             if data['confirm_code']:
-                send_verfy_mail(user.email, current_app.config['UST_MAIL'], data['confirm_code'])
+                send_verfy_again(user.email, current_app.config['UST_MAIL'], data['confirm_code'])
                 return { 
                     "access_token": access_token,
                     "refresh_token": refresh_token,
@@ -112,7 +112,10 @@ def home():
     confirm_code = request.headers['CONFIRM']
     if confirm_code:
         print(confirm_code)
-        return {"msg": "check email for verfication number."}
+        return {
+            "msg": "check email for verfication number.",
+            "url": url_for('/confirm')
+        }
     return {"msg": "welcome home boddy!"}
 
 @api.route('/profile/<string:username>', methods=['GET'])
@@ -220,10 +223,30 @@ def confirm(username):
         if json_data['confirm_code'] == loaded_data['confirm_code']:
             user.confirmed = True
             db.session.commit()
+            next = url_for('/change-password')
             if next:
                 redirect(next)
-            return redirect(url_for('/home'))
+            return {
+                "msg": "Confirmation done, now change password.",
+                "next_url": url_for('/home'),
+            }
     return {"msg": "please make sure the confirmation number is correct."}, 400
+
+@api.route('/edit-password/<int:id>', methods=['POST'])
+@confirmed
+def edit_password(id):
+    json_data = request.get_json()
+    user = Users.find_by_id(id)
+    if user:
+        hashed_old_password = hashlib.md5(json_data['old_password'].encode('utf-8')).hexdigest()
+        hashed_new_password = hashlib.md5(json_data['new_password'].encode('utf-8')).hexdigest()
+        if hashed_old_password == user.password:
+            user.password = hashed_new_password
+        else:
+            return {"msg": "error, passwords isn't correct."}
+    else:
+        return {"msg": "usr not found"}, 404
+    return {"msg": "Password updated correctly."}
 
 @api.route('/logout', methods=['POST'])
 @jwt_required

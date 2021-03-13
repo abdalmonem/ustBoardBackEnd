@@ -18,13 +18,19 @@ class DeptModel(db.Model):
     @classmethod
     def check_dept(cls, title, dept_type):
         return cls.query.filter_by(title=title, dept_type=dept_type).first()
+    
+    @staticmethod
+    def find_by_title(cls, title):
+        return cls.query.filter_by(title=title).first()
+    
+    @staticmethod
+    def find_by_id(cls, id):
+        return cls.query.filter_by(id=id).first()
 
     def save_data(self):
         db.session.add(self)
         db.session.commit()
 
-    def get_title(self):
-        return self.title
-
-    def get_type(self):
-        return self.dept_type
+    def delete_data(self):
+        db.session.delete(self)
+        db.session.commit()
