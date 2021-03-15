@@ -12,11 +12,11 @@ class ClassGroup(db.Model):
     def __init__(self, **kwargs):
         super(ClassGroup, self).__init__(**kwargs)
 
-    @staticmethod
+    @classmethod
     def find_by_name(cls, name):
         return cls.query.filter_by(group_name=name).first()
     
-    @staticmethod
+    @classmethod
     def find_by_id(cls, id):
         return cls.query.filter_by(id=id).first()
 

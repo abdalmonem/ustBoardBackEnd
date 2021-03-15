@@ -29,40 +29,44 @@ teacher_schema = TeacherSchema()
 @api.route('/')
 def create_users():
     admin = Admin(
-        username='ste7en',
-        email='ste7e@outlook.com',
-        password='7777',
-        phone='090144',
+        username='stephy',
+        email='stephy@outlook.com',
+        password='990099',
+        phone='0912533',
         surename='Areik Steven Donato',
-        admin_card='AD2',
-        gendre=0
+        admin_card='AD03',
+        gendre=0,
+        confirmed=True
     )
     supervisor = Supervisor(
-        username='nazar',
-        email='nazar@hotmail.com',
-        password='9999',
-        phone='9900',
-        surename='Nazar Esmail',
-        super_card='SU1',
-        gendre=0
+        username='nazaria',
+        email='nazaria@hotmail.com',
+        password='887788',
+        phone='0999112',
+        surename='Nazaria Esmail',
+        super_card='SU02',
+        gendre=0,
+        confirmed=True
     )
     teacher = Teachers(
-        username='ali',
-        email='ali@gmail.com',
-        password='1122',
-        phone='1122',
+        username='osman',
+        email='osman@gmail.com',
+        password='5555',
+        phone='012233',
         surename='Ali Esmail',
-        teacher_card='TE1',
-        gendre=0
+        teacher_card='TE02',
+        gendre=0,
+        confirmed=True
     )
     student = Student(
-        username='susan',
-        email='susa@gmail.com',
+        username='malikah',
+        email='malik@gmail.com',
         password='2020',
-        phone='2020',
-        surename='Susan Kamal',
-        card_id='IT2016',
-        gendre=0
+        phone='090001',
+        surename='Malikah Kamal',
+        card_id='IT2016B0525',
+        gendre=1,
+        confirmed=True
     )
     teacher.save_data()
     admin.save_data()

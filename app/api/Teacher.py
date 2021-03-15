@@ -36,7 +36,7 @@ def add_teacher():
 @supervisor_required
 def get_teacher(username):
     try:
-        teacher = Supervisor.find_by_username(username)
+        teacher = Teachers.find_by_username(username)
     except:
         return {"msg": "Database error."}
     if teacher:

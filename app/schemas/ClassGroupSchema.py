@@ -4,5 +4,4 @@ from .. import ma
 class ClassGroupSchema(ma.Schema):
     group_name = fields.Str()
     hall_number = fields.Int()
-    scheduale = fields.Int()
-    dept = fields.Int()
+    dept_id = fields.Int()

@@ -37,7 +37,7 @@ def get_material(title):
         material = Materials.find_by_title(title)
     except IntegrityError as error:
         return error._message()
-    if not lab_group:
+    if not material:
         return {"msg": "not found"}, 404
     material_data = material_schema.dump(material)
     return {"data:": material_data}
@@ -77,12 +77,12 @@ def edit_material(id):
         return error.messages, 400
     return {"msg": "data has been updated.", "data": material_data}
 
-@api.route('/material/delete/<string:title>', methods=['DELETE'])
+@api.route('/material/delete/<int:id>', methods=['DELETE'])
 @jwt_required
 @supervisor_required
-def delete_material(title):
+def delete_material(id):
     try:
-        material = Materials.find_by_title(title)
+        material = Materials.find_by_id(id)
     except IntegrityError as error:
         return error._message()
     if not material:

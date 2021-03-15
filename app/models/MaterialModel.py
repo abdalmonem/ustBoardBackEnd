@@ -17,11 +17,11 @@ class Materials(db.Model):
     def check_material(cls, title):
         return cls.query.filter_by(title=title).first()
     
-    @staticmethod
+    @classmethod
     def find_by_title(cls, title):
         return cls.query.filter_by(title=title).first()
     
-    @staticmethod
+    @classmethod
     def find_by_id(cls, id):
         return cls.query.filter_by(id=id).first()
 

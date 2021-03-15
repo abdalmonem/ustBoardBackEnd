@@ -3,7 +3,7 @@ from .UserSchema import UserSchema
 from .. import ma
 
 class SupervisorSchema(UserSchema):
-    super_card_id = fields.Str()
+    super_card = fields.Str()
 
 
 # class SupervisorQueries(SupervisorSchema):

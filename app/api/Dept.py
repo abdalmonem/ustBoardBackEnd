@@ -28,18 +28,18 @@ def add_department():
         return error._message(IndentationError), 500
     return dept_schema.dump(dept)
 
-@api.route('/department/<string:title>', methods=['GET'])
+@api.route('/department/<int:id>', methods=['GET'])
 @jwt_required
 @admin_required
-def get_department(title):
+def get_department(id):
     try:
-        dept = DeptModel.find_by_title(title)
+        dept = DeptModel.find_by_id(id)
     except IntegrityError as error:
         return error._message()
     if not dept:
         return {"msg": "not found"}, 404
     dept_data = dept_schema.dump(dept)
-        return {"data:": dept_data}
+    return {"data:": dept_data}
 
 @api.route('/department/edit/<int:id>', methods=['PUT'])
 @jwt_required
@@ -72,12 +72,12 @@ def edit_department(id):
         return error.messages, 400
     return {"msg": "data has been updated.", "data": dept_data}
 
-@api.route('/department/delete/<string:title>', methods=['DELETE'])
+@api.route('/department/delete/<int:id>', methods=['DELETE'])
 @jwt_required
 @admin_required
-def delete_department(title):
+def delete_department(id):
     try:
-        dept = DeptModel.find_by_username(title)
+        dept = DeptModel.find_by_id(id)
     except IntegrityError as error:
         return error._message()
     if not dept:

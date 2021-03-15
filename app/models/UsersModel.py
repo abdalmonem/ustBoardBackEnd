@@ -26,6 +26,7 @@ class Users(db.Model):
         self.phone = phone
         self.surename = surename
         self.gendre = gendre
+        # self.confirmed = confirmed
 
     @classmethod
     def find_by_phone(cls, phone):

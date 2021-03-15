@@ -3,6 +3,7 @@ from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from flask_jwt_extended import jwt_required
 from . import api
+from .. import db
 from .decorators import supervisor_required
 from ..models import SchedualeCells
 from ..models import ClassSchedualeCells
@@ -44,3 +45,39 @@ def add_lab_scheduale():
     except IntegrityError as error:
         raise error._message(IndentationError)
     return lab_schud_schema.dump(data) 
+
+@api.route('/class-scheduale/<string:id>', methods=['GET'])
+@jwt_required
+@supervisor_required
+def get_class_scheduale(id):
+    pass
+
+@api.route('/lab-scheduale/<string:id>', methods=['GET'])
+@jwt_required
+@supervisor_required
+def get_lab_scheduale(id):
+    pass
+
+@api.route('/class-scheduale/edit/<int:id>', methods=['PUT'])
+@jwt_required
+@supervisor_required
+def edit_class_scheduale(id):
+    pass
+
+@api.route('/lab-scheduale/edit/<int:id>', methods=['PUT'])
+@jwt_required
+@supervisor_required
+def edit_lab_scheduale(id):
+    pass
+
+@api.route('/class-scheduale/delete/<int:id>', methods=['Delete'])
+@jwt_required
+@supervisor_required
+def delete_class_scheduale(id):
+    pass
+
+@api.route('/lab-scheduale/delete/<int:id>', methods=['Delete'])
+@jwt_required
+@supervisor_required
+def delete_lab_scheduale(id):
+    pass

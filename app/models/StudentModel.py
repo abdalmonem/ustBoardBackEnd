@@ -10,11 +10,11 @@ class Student(Users):
     grades = db.relationship('Grades', backref='material_grades')
     student_noti = db.relationship('Notifications', backref='student_alerts')
 
-    def __init__(self, card_id, **kwargs):
+    def __init__(self, card_id, year, **kwargs):
         super().__init__(**kwargs)
         self.card_id = card_id
         self.type = 'students'
-        self.username = card_id
+        self.year = year
 
     def get_rank(self):
         return self.rank

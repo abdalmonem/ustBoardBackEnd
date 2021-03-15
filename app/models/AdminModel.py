@@ -10,5 +10,4 @@ class Admin(Users):
         super().__init__(**kwargs)
         self.admin_card = admin_card
         self.rank = 3
-        self.username = admin_card
         self.type = 'admin'

@@ -19,11 +19,11 @@ class DeptModel(db.Model):
     def check_dept(cls, title, dept_type):
         return cls.query.filter_by(title=title, dept_type=dept_type).first()
     
-    @staticmethod
+    @classmethod
     def find_by_title(cls, title):
         return cls.query.filter_by(title=title).first()
     
-    @staticmethod
+    @classmethod
     def find_by_id(cls, id):
         return cls.query.filter_by(id=id).first()
 

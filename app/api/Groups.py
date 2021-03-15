@@ -2,6 +2,7 @@ from flask import request
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from . import api
+from .. import db
 from .decorators import supervisor_required
 from ..models import ClassGroup
 from ..schemas import ClassGroupSchema
@@ -21,7 +22,7 @@ def add_class_group():
         class_data = class_schema.load(json_data)
     except ValidationError as error:
         raise error.messages
-    group = ClassGroup.find_by_name(json_data['name'])
+    group = ClassGroup.find_by_name(json_data['group_name'])
     if group:
         return {"msg": "group already exists."}, 500
     data = ClassGroup(**class_data)
@@ -40,7 +41,7 @@ def add_lab_group():
         lab_data = lab_schema.load(json_data)
     except ValidationError as error:
         raise error.messages
-    lab = LabGroup.find_by_name(json_data['name'])
+    lab = LabGroup.find_by_name(json_data['group_name'])
     if lab:
         return {"msg": "group already exists."}, 500
     data = LabGroup(**lab_data)

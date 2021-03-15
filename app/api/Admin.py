@@ -1,10 +1,11 @@
 from flask import request, jsonify, current_app
 from flask_jwt_extended import jwt_required
-from .email import send_verfy_mail
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from .decorators import admin_required
+from .email import send_verfy_mail
 from . import api
+from .. import db
 from ..models import Admin
 from ..schemas.AdminSchema import AdminSchema
 from ..functions.Methods import pagination
@@ -20,9 +21,9 @@ def add_admin():
         admin_data = admin_schema.load(json_data)
     except ValidationError as error:
         return error.messages, 400
-    admin = Admin.username_exists(json_data['username'])
+    admin = Admin.find_by_username(json_data['username'])
     if admin:
-        return {"msg": "User already exists try diffrent username."}
+        return {"msg": "Admin already exists try diffrent username."}
     admin = Admin(**json_data)
     try:
         admin.save_data()
@@ -100,7 +101,7 @@ def edit_admin(id):
         admin_data = admin_schema.dump(admin)
     except ValidationError as error:
         return error.messages, 400
-    return {"msg": "data has been updated.", "data": dept_data}
+    return {"msg": "data has been updated.", "data": admin_data}
 
 @api.route('/admin/delete/<string:username>', methods=['DELETE'])
 @jwt_required
