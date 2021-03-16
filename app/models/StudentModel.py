@@ -15,7 +15,3 @@ class Student(Users):
         self.card_id = card_id
         self.type = 'students'
         self.year = year
-
-    def get_rank(self):
-        return self.rank
-        self.type = 'student'

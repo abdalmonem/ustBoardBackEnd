@@ -118,7 +118,7 @@ def delete_admin(username):
     except IntegrityError as error:
         db.session.rollback()
         return error._message(), 500
-    return {"msg": "admin data has been deleted."}
+    return {"msg": "data has been deleted."}
 
 @api.route('/admin/all', methods=['GET'])
 def get_admins():

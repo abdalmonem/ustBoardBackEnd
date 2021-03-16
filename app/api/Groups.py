@@ -152,7 +152,7 @@ def delete_class_group(group_name):
     except IntegrityError as error:
         db.session.rollback()
         return error._message(), 500
-    return {"msg": "department data has been deleted."}
+    return {"msg": "data has been deleted."}
 
 @api.route('/group/lab/delete/<string:group_name>', methods=['DELETE'])
 @jwt_required
@@ -169,7 +169,7 @@ def delete_lab_group(group_name):
     except IntegrityError as error:
         db.session.rollback()
         return error._message(), 500
-    return {"msg": "department data has been deleted."}
+    return {"msg": "data has been deleted."}
 
 @api.route('/group/class/all', methods=['GET'])
 @jwt_required

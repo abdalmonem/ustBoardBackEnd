@@ -11,6 +11,14 @@ class SchedualeCells(db.Model):
     def __init__(self, **kwargs):
         super(SchedualeCells, self).__init__(**kwargs)
 
+    @classmethod
+    def find_by_id(cls, id):
+        return cls.query.filter_by(id=id).first()
+
     def save_data(self):
         db.session.add(self)
+        db.session.commit()
+
+    def delete_data(self):
+        db.session.delete(self)
         db.session.commit()

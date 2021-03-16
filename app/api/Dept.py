@@ -87,7 +87,7 @@ def delete_department(id):
     except IntegrityError as error:
         db.session.rollback()
         return error._message(), 500
-    return {"msg": "department data has been deleted."}
+    return {"msg": "data has been deleted."}
 
 @api.route('/department/all', methods=['GET'])
 def get_departments():

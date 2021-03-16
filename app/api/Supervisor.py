@@ -112,7 +112,7 @@ def delete_supervisor(username):
     except IntegrityError as error:
         db.session.rollback()
         return error._message(), 500
-    return {"msg": "admin data has been deleted."}
+    return {"msg": "data has been deleted."}
 
 @api.route('/supervisor/all',methods=['GET'])
 @jwt_required
