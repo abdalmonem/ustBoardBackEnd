@@ -26,6 +26,10 @@ class DeptModel(db.Model):
     @classmethod
     def find_by_id(cls, id):
         return cls.query.filter_by(id=id).first()
+    
+    @classmethod
+    def get_row_count(cls):
+        return cls.query.filter_by(id).count()
 
     def save_data(self):
         db.session.add(self)

@@ -118,6 +118,42 @@ def delete_supervisor(username):
 @jwt_required
 @admin_required
 def get_supervisors():
-    page_num = request.args.get('page_num')
-    model_data = supervisor_schema.dump(Supervisor.get_all(), many=True)
-    return pagination(model_data, page_num, '/supervisors')
+    if request.args:
+        start = int(request.args.get('start'))
+        end = int(request.args.get('end'))
+        amount = int(request.args.get('amount'))
+        page_num = int(request.args.get('page_num'))
+        total = Student.get_row_count()
+        print("total admins are [{}]".format(total))
+        if (total / amount) % 2 == 0:
+            pages = round(total / amount)
+        else:
+            pages = round(total / amount) + 1
+        if page_num == 1:
+            data = Supervisor.query.with_entities(
+                Supervisor.username, Supervisor.surename, Supervisor.dept_id, Supervisor.super_card
+            ).limit(amount)
+            start = end + 1
+            end = end + amount
+            page_num = page_num + 1
+            next_url = '/student/all?start={}&end={}&amount={}&page_num={}'.format(start, end, amount, page_num)
+            return {"next_url": next_url, "admins data": supervisor_schema.dump(data, many=True)}
+        elif page_num > 1 and page_num == pages:
+            data = Supervisor.query.with_entities(
+                Supervisor.username, Supervisor.surename, Supervisor.dept_id, Supervisor.super_card
+            ).limit(amount).offset(start - 1)
+            start = end + 1
+            end = end + amount
+            page_num = page_num + 1
+            next_url = '/student/all?start={}&end={}&amount={}&page_num={}'.format(start, end, amount, page_num)
+            return {"next_url": next_url, "admins data": supervisor_schema.dump(data, many=True)}
+        else:
+            data = Supervisor.query.with_entities(
+                Supervisor.username, Supervisor.surename, Supervisor.dept_id, Supervisor.super_card
+            ).limit(amount).offset(start - 1)
+            start = end + 1
+            end = end + amount
+            page_num = page_num + 1
+            next_url = '/student/all?start={}&end={}&amount={}&page_num={}'.format(start, end, amount, page_num)
+            return {"next_url": next_url, "admins data": supervisor_schema.dump(data, many=True)}
+    return {"msg": "not found."}, 404

@@ -3,10 +3,10 @@ from flask_jwt_extended import get_jwt_claims, get_current_user
 from random import randint
 from flask import request, current_app
 from . import api
+from .LogoutList import LogoutList
 from .email import send_verfy_mail
 from ..models import Users
 from .. import jwt
-from ..functions.LogoutList import LogoutList
 
 @jwt.user_claims_loader
 def user_rank(identity):

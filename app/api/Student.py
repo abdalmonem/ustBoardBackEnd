@@ -116,4 +116,42 @@ def delete_student(username):
 
 @api.route('/student/all', methods=['GET'])
 def get_students():
-    pass
+    if request.args:
+        start = int(request.args.get('start'))
+        end = int(request.args.get('end'))
+        amount = int(request.args.get('amount'))
+        page_num = int(request.args.get('page_num'))
+        total = Student.get_row_count()
+        print("total admins are [{}]".format(total))
+        if (total / amount) % 2 == 0:
+            pages = round(total / amount)
+        else:
+            pages = round(total / amount) + 1
+        if page_num == 1:
+            data = Student.query.with_entities(
+                Student.username, Student.surename, Student.dept_id, Student.card_id
+            ).limit(amount)
+            start = end + 1
+            end = end + amount
+            page_num = page_num + 1
+            next_url = '/student/all?start={}&end={}&amount={}&page_num={}'.format(start, end, amount, page_num)
+            return {"next_url": next_url, "admins data": student_schema.dump(data, many=True)}
+        elif page_num > 1 and page_num == pages:
+            data = Student.query.with_entities(
+                Student.username, Student.surename, Student.dept_id, Student.card_id
+            ).limit(amount).offset(start - 1)
+            start = end + 1
+            end = end + amount
+            page_num = page_num + 1
+            next_url = '/student/all?start={}&end={}&amount={}&page_num={}'.format(start, end, amount, page_num)
+            return {"next_url": next_url, "admins data": student_schema.dump(data, many=True)}
+        else:
+            data = Student.query.with_entities(
+                Student.username, Student.surename, Student.dept_id, Student.card_id
+            ).limit(amount).offset(start - 1)
+            start = end + 1
+            end = end + amount
+            page_num = page_num + 1
+            next_url = '/student/all?start={}&end={}&amount={}&page_num={}'.format(start, end, amount, page_num)
+            return {"next_url": next_url, "admins data": student_schema.dump(data, many=True)}
+    return {"msg": "not found."}, 404

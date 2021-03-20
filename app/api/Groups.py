@@ -4,10 +4,8 @@ from sqlalchemy.exc import IntegrityError
 from . import api
 from .. import db
 from .decorators import supervisor_required
-from ..models import ClassGroup
-from ..schemas import ClassGroupSchema
-from ..models import LabGroup
-from ..schemas import LabGroupSchema
+from ..schemas import ClassSchedualSchema, ClassGroupSchema, LabSchedualSchema, LabGroupSchema
+from ..models import LabGroup, ClassGroup
 from flask_jwt_extended import jwt_required
 
 class_schema = ClassGroupSchema()

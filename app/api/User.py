@@ -4,8 +4,7 @@ from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
     get_raw_jwt,
-    get_jwt_claims,
-    verify_jwt_in_request
+    get_jwt_claims
 )
 from werkzeug.security import hashlib
 from marshmallow import ValidationError
@@ -13,9 +12,8 @@ from sqlalchemy.exc import IntegrityError
 from marshmallow import ValidationError
 from .email import send_verfy_mail
 from .decorators import supervisor_required, confirmed
-from . import api
+from . import api, LogoutList
 from .. import jwt, db
-from ..functions.LogoutList import LogoutList
 from ..models import Users, Teachers, Admin, Supervisor, Student
 from ..schemas import UserSchema, TeacherSchema, AdminSchema, SupervisorSchema, StudentSchema
 from itsdangerous import JSONWebSignatureSerializer as Serializer
@@ -66,7 +64,8 @@ def create_users():
         surename='Malikah Kamal',
         card_id='IT2016B0525',
         gendre=1,
-        confirmed=True
+        confirmed=True,
+        year='2016'
     )
     teacher.save_data()
     admin.save_data()

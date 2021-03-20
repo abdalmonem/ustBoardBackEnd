@@ -40,6 +40,10 @@ class Users(db.Model):
     def find_by_username(cls, username):
         return cls.query.filter_by(username=username).first()
 
+    @classmethod
+    def get_row_count(cls):
+        return cls.query.filter_by(confirmed=True).count()
+
     def generate_confirm_number(self, secret_key, expiration=1800):
         serial = Serializer(secret_key, expiration)
         return serial.dumps({"confirm_code": randint(000000, 999999)}).decode('utf-8')

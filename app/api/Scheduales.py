@@ -6,8 +6,7 @@ from . import api
 from .. import db
 from .decorators import supervisor_required
 from ..models import SchedualeCells, ClassSchedualeCells, LabSchedualeCells, ClassGroup, LabGroup
-from ..schemas.LabSchedualeSchema import LabSchedualSchema
-from ..schemas.ClassSchedualeSchema import ClassSchedualSchema
+from ..schemas import LabSchedualSchema, ClassSchedualSchema
 
 class_schud_schema = ClassSchedualSchema()
 lab_schud_schema = LabSchedualSchema()
