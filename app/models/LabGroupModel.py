@@ -21,6 +21,10 @@ class LabGroup(db.Model):
     def find_by_id(cls, id):
         return cls.query.filter_by(id=id).first()
 
+    @classmethod
+    def get_row_count(cls):
+        return cls.query.count()
+
     def save_data(self):
         db.session.add(self)
         db.session.commit()

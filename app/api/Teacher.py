@@ -16,32 +16,36 @@ teacher_schema = TeacherSchema()
 @jwt_required
 @supervisor_required
 def add_teacher():
-    json_data = request.get_json()
-    try:
-        data = teacher_schema.load(json_data)
-    except ValidationError as error:
-        raise error.messages
-    teacher = Teachers.find_by_phone(data['phone'])
-    if teacher:
-        return {"message": "Teacher already exists."}
-    teacher = Teachers(**data)
-    try:
-        teacher.save_data()
-    except IntegrityError as error:
-        raise error._message(IndentationError)
-    return teacher_schema.dump(teacher)
+    if request.method == 'POST':
+        json_data = request.get_json()
+        try:
+            data = teacher_schema.load(json_data)
+        except ValidationError as error:
+            return error.messages
+        teacher = Teachers.find_by_phone(data['phone'])
+        if teacher:
+            return {"message": "Teacher already exists."}
+        teacher = Teachers(**data)
+        try:
+            teacher.save_data()
+        except IntegrityError as error:
+            return error._message(IndentationError)
+        return teacher_schema.dump(teacher)
+    return {"msg": "invalid link"}
 
-@api.route('/teacher/<string:username>', methods=['GET'])
+@api.route('/teacher/<int:id>', methods=['GET'])
 @jwt_required
 @supervisor_required
-def get_teacher(username):
-    try:
-        teacher = Teachers.find_by_username(username)
-    except:
-        return {"msg": "Database error."}
-    if teacher:
-        return {"data": teacher_schema.dump(teacher)}
-    return {"msg": "User not found."}, 404
+def get_teacher(id):
+    if request.method == 'GET':
+        try:
+            teacher = Teachers.find_by_id(id)
+        except:
+            return {"msg": "Database error."}
+        if teacher:
+            return {"data": teacher_schema.dump(teacher)}
+        return {"msg": "User not found."}, 404
+    return {"msg": "invalid link"}, 400
 
 @api.route('/teacher/edit/<int:id>', methods=['PUT'])
 @jwt_required
@@ -97,25 +101,63 @@ def edit_teacher(id):
         return error.messages, 400
     return {"msg": "data has been updated.", "data": teacher_data}
 
-@api.route('/teacher/delete/<string:username>', methods=['DELETE'])
+@api.route('/teacher/delete/<int:id>', methods=['DELETE'])
 @jwt_required
 @supervisor_required
-def delete_teacher(username):
-    try:
-        teacher = Teachers.find_by_username(username)
-    except IntegrityError as error:
-        return error._message()
-    if not teacher:
-        return {"msg": "not found"}, 404
-    try:
-        teacher.delete_data()
-    except IntegrityError as error:
-        db.session.rollback()
-        return error._message(), 500
-    return {"msg": "data has been deleted."}
+def delete_teacher(id):
+    if request.method == 'DELETE':
+        try:
+            teacher = Teachers.find_by_id(id)
+        except IntegrityError as error:
+            return error._message()
+        if not teacher:
+            return {"msg": "not found"}, 404
+        try:
+            teacher.delete_data()
+        except IntegrityError as error:
+            db.session.rollback()
+            return error._message(), 500
+        return {"msg": "data has been deleted."}
+    return {"msg": "invalid link"}, 400
 
-@api.route('/admin/all', methods=['GET'])
+@api.route('/teacher/all', methods=['GET'])
 @jwt_required
 @supervisor_required
 def get_teachers():
-    pass
+    if request.args and request.method == 'GET':
+        start = int(request.args.get('start'))
+        end = int(request.args.get('end'))
+        amount = int(request.args.get('amount'))
+        page_num = int(request.args.get('page_num'))
+        total = Teachers.get_row_count()
+        if (total / amount) % 2 == 0:
+            pages = round(total / amount)
+        else:
+            pages = round(total / amount)
+        if page_num == 1:
+            data = Teachers.query.with_entities(
+                Teachers.username, Teachers.surename, Teachers.teacher_card
+            ).limit(amount)
+            if page_num == pages or page_num > pages:
+                next_url = ''
+            else:
+                start = end + 1
+                end = end + amount
+                page_num = page_num + 1
+                next_url = '/teacher/all?start={}&end={}&amount={}&page_num={}'.format(start, end, amount, page_num)
+            return {"next_url": next_url, "Teacher data": teacher_schema.dump(data, many=True)}
+        elif page_num > 1:
+            data = Teachers.query.with_entities(
+                Teachers.username, Teachers.surename, Teachers.teacher_card
+            ).limit(amount).offset(start - 1)
+            if page_num == pages or page_num > pages:
+                next_url = ''
+            else:
+                start = end + 1
+                end = end + amount
+                page_num = page_num + 1
+                next_url = '/teacher/all?start={}&end={}&amount={}&page_num={}'.format(start, end, amount, page_num)
+            return {"next_url": next_url, "Teacher data": teacher_schema.dump(data, many=True)}
+        else:
+            return {"msg": "invalid link"}, 400
+    return {"msg": "not found."}, 404

@@ -122,27 +122,29 @@ def delete_admin(username):
 
 @api.route('/admin/all', methods=['GET'])
 def get_admins():
-    if request.args:
+    if request.args and request.method == 'GET':
         start = int(request.args.get('start'))
         end = int(request.args.get('end'))
         amount = int(request.args.get('amount'))
         page_num = int(request.args.get('page_num'))
         total = Admin.get_row_count()
-        print("total admins are [{}]".format(total))
         if (total / amount) % 2 == 0:
             pages = round(total / amount)
         else:
             pages = round(total / amount) + 1
-        if page_num == 1:
+        if page_num == 1 or page_num > pages:
             data = Admin.query.with_entities(
                 Admin.username, Admin.surename, Admin.date
             ).limit(amount)
-            start = end + 1
-            end = end + amount
-            page_num = page_num + 1
-            next_url = '/admin/all?start={}&end={}&amount={}&page_num={}'.format(start, end, amount, page_num)
-            return {"next_url": next_url, "admins data": admin_schema.dump(data, many=True)}
-        elif page_num > 1 and page_num == pages:
+            if page_num == pages or page_num > pages:
+                next_url = ''
+            else:
+                start = end + 1
+                end = end + amount
+                page_num = page_num + 1
+                next_url = '/department/all?start={}&end={}&amount={}&page_num={}'.format(start, end, amount, page_num)
+            return {"next_url": next_url, "Admins data": admin_schema.dump(data, many=True)}
+        elif page_num > 1:
             data = Admin.query.with_entities(
                 Admin.username, Admin.surename, Admin.date, Admin.id
             ).limit(amount).offset(start - 1)

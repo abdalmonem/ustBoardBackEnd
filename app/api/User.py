@@ -26,50 +26,50 @@ teacher_schema = TeacherSchema()
 
 @api.route('/')
 def create_users():
-    admin = Admin(
-        username='stephy',
-        email='stephy@outlook.com',
-        password='990099',
-        phone='0912533',
-        surename='Areik Steven Donato',
-        admin_card='AD03',
-        gendre=0,
-        confirmed=True
-    )
-    supervisor = Supervisor(
-        username='nazaria',
-        email='nazaria@hotmail.com',
-        password='887788',
-        phone='0999112',
-        surename='Nazaria Esmail',
-        super_card='SU02',
-        gendre=0,
-        confirmed=True
-    )
-    teacher = Teachers(
-        username='osman',
-        email='osman@gmail.com',
-        password='5555',
-        phone='012233',
-        surename='Ali Esmail',
-        teacher_card='TE02',
-        gendre=0,
-        confirmed=True
-    )
-    student = Student(
-        username='malikah',
-        email='malik@gmail.com',
-        password='2020',
-        phone='090001',
-        surename='Malikah Kamal',
-        card_id='IT2016B0525',
-        gendre=1,
-        confirmed=True,
-        year='2016'
-    )
-    teacher.save_data()
-    admin.save_data()
-    supervisor.save_data()
+    # admin = Admin(
+    #     username='stephy',
+    #     email='stephy@outlook.com',
+    #     password='990099',
+    #     phone='0912533',
+    #     surename='Areik Steven Donato',
+    #     admin_card='AD03',
+    #     gendre=0,
+    #     confirmed=True
+    # )
+    # supervisor = Supervisor(
+    #     username='nazaria',
+    #     email='nazaria@hotmail.com',
+    #     password='887788',
+    #     phone='0999112',
+    #     surename='Nazaria Esmail',
+    #     super_card='SU02',
+    #     gendre=0,
+    #     confirmed=True
+    # )
+    # teacher = Teachers(
+    #     username='osman',
+    #     email='osman@gmail.com',
+    #     password='5555',
+    #     phone='012233',
+    #     surename='Ali Esmail',
+    #     teacher_card='TE02',
+    #     gendre=0,
+    #     confirmed=True
+    # )
+    # student = Student(
+    #     username='malikah',
+    #     email='malik@gmail.com',
+    #     password='2020',
+    #     phone='090001',
+    #     surename='Malikah Kamal',
+    #     card_id='IT2016B0525',
+    #     gendre=1,
+    #     confirmed=True,
+    #     year='2016'
+    # )
+    # teacher.save_data()
+    # admin.save_data()
+    # supervisor.save_data()
     return {"msg": "data added"}
 
 @api.route('/login', methods=['POST'])
@@ -83,7 +83,6 @@ def login():
     if user and user.password_check(data['password']):
         if not user.confirmed:
             access_token = create_access_token(identity=user.id, fresh=True)
-            refresh_token = create_access_token(identity=user.id)
             confirm_code = user.generate_confirm_number(current_app.config['SECRET_KEY'], expiration=1800)
             serial = Serializer(current_app.config['SECRET_KEY'])
             try:
@@ -94,16 +93,13 @@ def login():
                 send_verfy_again(user.email, current_app.config['UST_MAIL'], data['confirm_code'])
                 return { 
                     "access_token": access_token,
-                    "refresh_token": refresh_token,
                     "id": user.id, "rank": user.rank,
                     "confirm code": confirm_code
                 }, 200
         else:
             access_token = create_access_token(identity=user.id, fresh=True)
-            refresh_token = create_access_token(identity=user.id)
             return { 
                 "access_token": access_token,
-                "refresh_token": refresh_token,
                 "id": user.id, "rank": user.rank
             }, 200
     else:

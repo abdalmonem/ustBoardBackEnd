@@ -16,8 +16,8 @@ class DeptModel(db.Model):
         super(DeptModel, self).__init__(**kwargs)
 
     @classmethod
-    def check_dept(cls, title, dept_type):
-        return cls.query.filter_by(title=title, dept_type=dept_type).first()
+    def check_dept(cls, title, dept_type, year):
+        return cls.query.filter_by(title=title, dept_type=dept_type, year=year).first()
     
     @classmethod
     def find_by_title(cls, title):
@@ -29,7 +29,7 @@ class DeptModel(db.Model):
     
     @classmethod
     def get_row_count(cls):
-        return cls.query.filter_by(id).count()
+        return cls.query.count()
 
     def save_data(self):
         db.session.add(self)

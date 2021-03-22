@@ -12,8 +12,4 @@ class Teachers(Users):
         super().__init__(**kwargs)
         self.teacher_card = teacher_card
         self.rank = 1
-        self.username = teacher_card
         self.type = 'teacher'
-
-    def get_rank(self):
-        return self.rank

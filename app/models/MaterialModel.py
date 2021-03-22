@@ -14,8 +14,10 @@ class Materials(db.Model):
         super(Materials, self).__init__(**kwargs)
 
     @classmethod
-    def check_material(cls, title):
-        return cls.query.filter_by(title=title).first()
+    def check_material(cls, title, dept_id):
+        if cls.query.filter_by(title=title, dept_id=dept_id).first():
+            return True
+        return False
     
     @classmethod
     def find_by_title(cls, title):
@@ -24,6 +26,10 @@ class Materials(db.Model):
     @classmethod
     def find_by_id(cls, id):
         return cls.query.filter_by(id=id).first()
+
+    @classmethod
+    def get_row_count(cls):
+        return cls.query.count()
 
     def save_data(self):
         db.session.add(self)

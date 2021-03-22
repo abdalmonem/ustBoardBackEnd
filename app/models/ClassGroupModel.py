@@ -20,9 +20,9 @@ class ClassGroup(db.Model):
     def find_by_id(cls, id):
         return cls.query.filter_by(id=id).first()
 
-    # @classmethod
-    # def get_scheduale(cls, id):
-    #     return cls.class_scheduale.cells.filter_by(id=id)
+    @classmethod
+    def get_row_count(cls):
+        return cls.query.count()
 
     def save_data(self):
         db.session.add(self)

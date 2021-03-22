@@ -3,6 +3,7 @@ from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from . import api
+from .. import db
 from .decorators import admin_required
 from ..models import DeptModel
 from ..schemas import DeptSchema
@@ -14,19 +15,21 @@ dept_schema = DeptSchema()
 @admin_required
 def add_department():
     json_data = request.get_json()
-    try:
-        dept_data = dept_schema.load(json_data)
-    except ValidationError as error:
-        return error.messages, 400
-    dept = DeptModel.check_dept(dept_data['title'], dept_data['dept_type'])
-    if dept:
-            return {"message": "Dept already exists."}
-    dept = DeptModel(**json_data)
-    try:
-        dept.save_data()
-    except IntegrityError as error:
-        return error._message(IndentationError), 500
-    return dept_schema.dump(dept)
+    if request.method == 'POST':
+        try:
+            dept_data = dept_schema.load(json_data)
+        except ValidationError as error:
+            return error.messages, 400
+        dept = DeptModel.check_dept(dept_data['title'], dept_data['dept_type'], year=dept_data['year'])
+        if dept:
+                return {"message": "Dept already exists."}
+        dept = DeptModel(**json_data)
+        try:
+            dept.save_data()
+        except IntegrityError as error:
+            return error._message(IndentationError), 500
+        return dept_schema.dump(dept)
+    return {"msg": "invalid link"}
 
 @api.route('/department/<int:id>', methods=['GET'])
 @jwt_required
@@ -53,12 +56,12 @@ def edit_department(id):
     if not dept:
         return {"msg": "not found"}, 404
     try:
-        if 'dept_title' in json_data:
-            if DeptModel.query.filter_by(title=json_data['dept_type']).first():
+        if 'title' in json_data:
+            if DeptModel.query.filter_by(title=json_data['title']).first():
                 return {"msg": "department already exists"}, 500
-            dept.title = json_data['dept_title']
+            dept.title = json_data['title']
         if 'dept_type' in json_data:
-            dept.type = json_data['dept_type']
+            dept.dept_type = json_data['dept_type']
         if 'year' in json_data:
             dept.year = json_data['year']
         db.session.commit()
@@ -91,13 +94,12 @@ def delete_department(id):
 
 @api.route('/department/all', methods=['GET'])
 def get_departments():
-    if request.args:
+    if request.args and request.method == 'GET':
         start = int(request.args.get('start'))
         end = int(request.args.get('end'))
         amount = int(request.args.get('amount'))
         page_num = int(request.args.get('page_num'))
         total = DeptModel.get_row_count()
-        print("total admins are [{}]".format(total))
         if (total / amount) % 2 == 0:
             pages = round(total / amount)
         else:
@@ -106,27 +108,26 @@ def get_departments():
             data = DeptModel.query.with_entities(
                 DeptModel.title, DeptModel.year, DeptModel.dept_type
             ).limit(amount)
-            start = end + 1
-            end = end + amount
-            page_num = page_num + 1
-            next_url = '/department/all?start={}&end={}&amount={}&page_num={}'.format(start, end, amount, page_num)
-            return {"next_url": next_url, "admins data": dept_schema.dump(data, many=True)}
-        elif page_num > 1 and page_num == pages:
+            if page_num == pages or page_num > pages:
+                next_url = ''
+            else:
+                start = end + 1
+                end = end + amount
+                page_num = page_num + 1
+                next_url = '/department/all?start={}&end={}&amount={}&page_num={}'.format(start, end, amount, page_num)
+            return {"next_url": next_url, "departments data": dept_schema.dump(data, many=True)}
+        elif page_num > 1:
             data = DeptModel.query.with_entities(
                 DeptModel.title, DeptModel.year, DeptModel.dept_type
             ).limit(amount).offset(start - 1)
-            start = end + 1
-            end = end + amount
-            page_num = page_num + 1
-            next_url = '/department/all?start={}&end={}&amount={}&page_num={}'.format(start, end, amount, page_num)
-            return {"next_url": next_url, "admins data": dept_schema.dump(data, many=True)}
+            if page_num == pages or page_num > pages:
+                next_url = ''
+            else:
+                start = end + 1
+                end = end + amount
+                page_num = page_num + 1
+                next_url = '/department/all?start={}&end={}&amount={}&page_num={}'.format(start, end, amount, page_num)
+            return {"next_url": next_url, "departments data": dept_schema.dump(data, many=True)}
         else:
-            data = DeptModel.query.with_entities(
-                DeptModel.title, DeptModel.year, DeptModel.dept_type
-            ).limit(amount).offset(start - 1)
-            start = end + 1
-            end = end + amount
-            page_num = page_num + 1
-            next_url = '/department/all?start={}&end={}&amount={}&page_num={}'.format(start, end, amount, page_num)
-            return {"next_url": next_url, "admins data": dept_schema.dump(data, many=True)}
+            return {"msg": "invalid link"}
     return {"msg": "not found."}, 404
