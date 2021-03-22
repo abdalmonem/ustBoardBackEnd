@@ -23,6 +23,6 @@ def create_app(config_name):
     with app.app_context():
 
         from .api import api as api_blueprint
-        app.register_blueprint(api_blueprint, url_prefix='/ust-board')
+        app.register_blueprint(api_blueprint, url_prefix='/api')
 
         return app
