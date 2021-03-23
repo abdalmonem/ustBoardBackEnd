@@ -75,35 +75,37 @@ def create_users():
 @api.route('/login', methods=['POST'])
 def login():
     json_data = request.get_json()
-    try:
-        data = user_schema.load(json_data)
-    except ValidationError as error:
-        raise error.messages
-    user = Users.find_by_phone(data['phone'])
-    if user and user.password_check(data['password']):
-        if not user.confirmed:
-            access_token = create_access_token(identity=user.id, fresh=True)
-            confirm_code = user.generate_confirm_number(current_app.config['SECRET_KEY'], expiration=1800)
-            serial = Serializer(current_app.config['SECRET_KEY'])
-            try:
-                data = serial.loads(confirm_code.encode('utf-8'))
-            except:
-                return {"msg": "couldn't load confirm"}
-            if data['confirm_code']:
-                send_verfy_again(user.email, current_app.config['UST_MAIL'], data['confirm_code'])
+    if request.method == 'POST':
+        try:
+            data = user_schema.load(json_data)
+        except ValidationError as error:
+            raise error.messages
+        user = Users.find_by_phone(data['phone'])
+        if user and user.password_check(data['password']):
+            if not user.confirmed:
+                access_token = create_access_token(identity=user.id, fresh=True)
+                confirm_code = user.generate_confirm_number(current_app.config['SECRET_KEY'], expiration=1800)
+                serial = Serializer(current_app.config['SECRET_KEY'])
+                try:
+                    data = serial.loads(confirm_code.encode('utf-8'))
+                except:
+                    return {"msg": "couldn't load confirm"}
+                if data['confirm_code']:
+                    send_verfy_again(user.email, current_app.config['UST_MAIL'], data['confirm_code'])
+                    return { 
+                        "access_token": access_token,
+                        "id": user.id, "rank": user.rank,
+                        "confirm code": confirm_code
+                    }, 200
+            else:
+                access_token = create_access_token(identity=user.id, fresh=True)
                 return { 
                     "access_token": access_token,
-                    "id": user.id, "rank": user.rank,
-                    "confirm code": confirm_code
+                    "id": user.id, "rank": user.rank
                 }, 200
         else:
-            access_token = create_access_token(identity=user.id, fresh=True)
-            return { 
-                "access_token": access_token,
-                "id": user.id, "rank": user.rank
-            }, 200
-    else:
-        return { "error": "Either User not found or Invalid \"input\"." }, 400
+            return { "error": "Either User not found or Invalid \"input\"." }, 400
+    return {"msg": "invalid link"}, 400
 
 @api.route('/home', methods=['GET'])
 @jwt_required

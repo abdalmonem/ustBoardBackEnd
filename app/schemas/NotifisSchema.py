@@ -3,9 +3,9 @@ from .. import ma
 
 class NotificationSchema(ma.Schema):
     title = fields.Str()
-    position = fields.Int()
     date = fields.Str()
     content = fields.Str()
-    std_id = fields.Int()
+    student_id = fields.Int()
     teacher_id = fields.Int()
-    supervisor = fields.Int()
+    class_id = fields.Int()
+    lab_id = fields.Int()
